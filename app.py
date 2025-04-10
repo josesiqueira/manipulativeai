@@ -2,7 +2,7 @@ import streamlit as st
 import openai
 import os
 
-openai.api_key = st.secrets["OPENAI_API_KEY"] if "OPENAI_API_KEY" in st.secrets else os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"] if "OPENAI_API_KEY" in st.secrets else os.getenv("OPENAI_API_KEY"))
 
 st.set_page_config(page_title="Political Persuasion Bots", page_icon="🗳️")
 st.title("🧠 Manipulative AI: Political Persuasion Bots")
@@ -40,14 +40,14 @@ if st.button("Talk to the Bot") and user_input.strip():
 
         system_message = f"{bot_prompt} {persuasion_prompt}"
 
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": user_input}
             ]
         )
-        reply = response["choices"][0]["message"]["content"]
+        reply = response.choices[0].message.content
         st.markdown("**Bot response:**")
         st.write(reply)
 
